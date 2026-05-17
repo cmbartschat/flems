@@ -95,8 +95,9 @@ export const createFlemsIoLink = state => {
 }
 
 function clean(state) {
-  const clean = Object.keys(defaults()).reduce((acc, x) =>
-    (x in state && state[x] !== defaults[x] && (acc[x] = state[x]), acc)
+  const d = defaults()
+  const clean = Object.keys(d).reduce((acc, x) =>
+    (x in state && state[x] !== d[x] && (acc[x] = state[x]), acc)
   , {})
 
   if (state.files && state.files.length)
