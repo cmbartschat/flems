@@ -4,7 +4,7 @@ import m from 'mithril'
 import app from './app'
 
 import Model from './model'
-import { defaults, createFlemsIoLink } from './state'
+import { defaults, createFlemsIoLink, unpackFlemsIoLink, createFlemsIoHash } from './state'
 import Actions from './actions'
 import message from './message'
 import hotkeys from './hotkeys'
@@ -49,6 +49,8 @@ function Flems(dom, state = {}, runtimeUrl) {
 
 Flems.defaults = defaults
 Flems.createFlemsIoLink = createFlemsIoLink
+Flems.createFlemsIoHash = createFlemsIoHash
+Flems.unpackFlemsIoLink = unpackFlemsIoLink
 Flems.version = process.env.FLEMS_VERSION // eslint-disable-line
 
 export default Flems

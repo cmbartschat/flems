@@ -1,11 +1,13 @@
 import { memoize } from './utils'
 
+const COMPILER_BASE = window.flemsCompilerBase || 'https://static.flems.io/compilers/'
+
 const load = memoize(url =>
   new Promise((resolve, reject) => {
     const el = document.createElement('script')
     el.async = false
     el.charset = 'utf-8'
-    el.src = url
+    el.src = COMPILER_BASE + url
     document.body.appendChild(el)
     el.onload = resolve
     el.onerror = err =>
@@ -14,10 +16,10 @@ const load = memoize(url =>
 )
 
 const compilers = {
-  styl: file => load('https://static.flems.io/compilers/stylus.min.js').then(() => ({
+  styl: file => load('stylus.min.js').then(() => ({
     code: window.stylus.render(file.content)
   })),
-  scss: file => load('https://static.flems.io/compilers/sass.sync.js').then(() =>
+  scss: file => load('sass.sync.js').then(() =>
     new Promise((resolve, reject) =>
       window.Sass.compile(file.content, result => {
         result.message
@@ -26,7 +28,7 @@ const compilers = {
       })
     )
   ),
-  sass: file => load('https://static.flems.io/compilers/sass.sync.js').then(() =>
+  sass: file => load('sass.sync.js').then(() =>
     new Promise((resolve, reject) =>
       window.Sass.compile(file.content, {
         indentedSyntax: true
@@ -37,10 +39,10 @@ const compilers = {
       })
     )
   ),
-  less: file => load('https://static.flems.io/compilers/less.min.js').then(() =>
+  less: file => load('less.min.js').then(() =>
     window.less.render(file.content).then(result => ({ code: result.css }))
   ),
-  ts: file => load('https://static.flems.io/compilers/typescriptServices.js').then(() => {
+  ts: file => load('typescriptServices.js').then(() => {
     const result = window.ts.transpileModule(file.content, {
       fileName: file.name,
       compilerOptions: {
@@ -56,7 +58,7 @@ const compilers = {
       map: result.sourceMapText
     }
   }),
-  babel: file => load('https://static.flems.io/compilers/babel.min.js').then(() =>
+  babel: file => load('babel.min.js').then(() =>
     window.Babel.transform(file.content, {
       presets: [['es2015', { modules: false }], 'stage-2', 'react'],
       sourceMaps: true,
@@ -64,7 +66,7 @@ const compilers = {
       sourceFileName: file.name
     })
   ),
-  ls: file => load('https://static.flems.io/compilers/livescript-min.js').then(() => {
+  ls: file => load('livescript-min.js').then(() => {
     if (!window.livescript)
       window.livescript = window.require('livescript')
 
@@ -79,8 +81,8 @@ const compilers = {
     }
   }),
   coffee: file => Promise.all([
-    load('https://static.flems.io/compilers/babel.min.js'),
-    load('https://static.flems.io/compilers/coffeescript.js')
+    load('babel.min.js'),
+    load('coffeescript.js')
   ]).then(() => {
     const coffee = window.CoffeeScript.compile(file.content, {
       sourceMap: true,
@@ -96,7 +98,7 @@ const compilers = {
 
     return data
   }),
-  sibilant: file => load('https://static.flems.io/compilers/sibilant.js').then(() => {
+  sibilant: file => load('sibilant.js').then(() => {
     return {
       code: window.sibilant.sibilize(file.content)
     }

@@ -88,10 +88,22 @@ export function sanitize(state) {
   return state
 }
 
-export const createFlemsIoLink = state => {
-  return 'https://flems.io/#0=' + lz.compressToEncodedURIComponent(
+export const createFlemsIoHash = state => {
+  return '#0=' + lz.compressToEncodedURIComponent(
     JSON.stringify(clean(state))
   )
+}
+
+export const createFlemsIoLink = state => {
+  return (window.flemsShareBase || 'https://flems.io') + '/' + createFlemsIoHash(state)
+}
+
+export const unpackFlemsIoLink = (urlString) => {
+  const url = new URL(urlString)
+  if (!url.hash.startsWith('#0=')) {
+    return null
+  }
+ return sanitize(JSON.parse(lz.decompressFromEncodedURIComponent(url.hash.substring(3))))
 }
 
 function clean(state) {
